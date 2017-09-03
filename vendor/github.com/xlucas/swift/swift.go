@@ -1003,7 +1003,7 @@ func (c *Connection) Account() (info Account, headers Headers, err error) {
 		return
 	}
 	// Optional headers
-	info.Quota, _ = getInt64FromHeader(resp, "X-Account-Meta-Quota")
+	info.Quota, _ = getInt64FromHeader(resp, "X-Account-Meta-Quota-Bytes")
 
 	return
 }
