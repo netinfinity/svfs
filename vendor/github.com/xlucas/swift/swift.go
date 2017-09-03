@@ -1002,8 +1002,11 @@ func (c *Connection) Account() (info Account, headers Headers, err error) {
 	if info.Objects, err = getInt64FromHeader(resp, "X-Account-Object-Count"); err != nil {
 		return
 	}
+	if info.Quota, err = getInt64FromHeader(resp, "X-Account-Meta-Quota-Bytes"); err != nil {
+		return
+	}
 	// Optional headers
-	info.Quota, _ = getInt64FromHeader(resp, "X-Account-Meta-Quota-Bytes")
+	//info.Quota, _ = getInt64FromHeader(resp, "X-Account-Meta-Quota-Bytes")
 
 	return
 }
