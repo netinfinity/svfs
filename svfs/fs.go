@@ -129,11 +129,45 @@ func (s *SVFS) Statfs(ctx context.Context, req *fuse.StatfsRequest, resp *fuse.S
 		return err
 	}
 
-	resp.Bsize = 4096
-	resp.Bavail = 53687091211
-	resp.Bfree = resp.Bavail
+	resp.Bsize = uint32(BlockSize)
 
-	return 
+	// Not mounting a specific container, then get account
+	// information.
+	if TargetContainer == "" {
+		resp.Files = uint64(account.Objects)
+		resp.Blocks = uint64(account.BytesUsed) / uint64(resp.Bsize)
+	}
+	// Mounting a specific container, then get container usage.
+	if TargetContainer != "" {
+		c, _, err := SwiftConnection.Container(TargetContainer)
+		if err != nil {
+			return err
+		}
+		cs, _, err := SwiftConnection.Container(TargetContainer + segmentContainerSuffix)
+		if err != nil {
+			return err
+		}
+		resp.Files = uint64(c.Count)
+		resp.Blocks = uint64(c.Bytes+cs.Bytes) / uint64(resp.Bsize)
+	}
+	// An account quota has been set, compute relative free space.
+	if account.Quota > 0 {
+		resp.Bavail = uint64(account.Quota.BytesUsed) / uint64(resp.Bsize)
+		resp.Bfree = resp.Bavail
+		if TargetContainer == "" {
+			resp.Blocks = uint64(account.Quota) / uint64(resp.Bsize)
+		} else {
+			resp.Blocks = uint64(account.Quota.BytesUsed)/uint64(resp.Bsize) + resp.Blocks
+		}
+	} else {
+		// Else there's theorically no limit to available storage space.
+		used := resp.Blocks
+		resp.Blocks = uint64(1<<63-1) / uint64(resp.Bsize)
+		resp.Bavail = resp.Blocks - used
+		resp.Bfree = resp.Bavail
+	}
+
+	return nil
 }
 
 func (s *SVFS) rootContainer(container string) (fs.Node, error) {
