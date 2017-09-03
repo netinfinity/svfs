@@ -152,12 +152,12 @@ func (s *SVFS) Statfs(ctx context.Context, req *fuse.StatfsRequest, resp *fuse.S
 	}
 	// An account quota has been set, compute relative free space.
 	if account.Quota > 0 {
-		resp.Bavail = uint64(account.Quota.BytesUsed) / uint64(resp.Bsize)
+		resp.Bavail = uint64(account.BytesUsed) / uint64(resp.Bsize)
 		resp.Bfree = resp.Bavail
 		if TargetContainer == "" {
 			resp.Blocks = uint64(account.Quota) / uint64(resp.Bsize)
 		} else {
-			resp.Blocks = uint64(account.Quota.BytesUsed)/uint64(resp.Bsize) + resp.Blocks
+			resp.Blocks = uint64(account.BytesUsed)/uint64(resp.Bsize) + resp.Blocks
 		}
 	} else {
 		// Else there's theorically no limit to available storage space.
