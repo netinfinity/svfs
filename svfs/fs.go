@@ -129,8 +129,8 @@ func (s *SVFS) Statfs(ctx context.Context, req *fuse.StatfsRequest, resp *fuse.S
 		return err
 	}
 
-	resp.Bsize = uint32(BlockSize)
-	resp.Bavail = uint64(account.BytesUsed) / uint64(resp.Bsize)
+	resp.Bsize = 4096
+	resp.Bavail = 53687091211
 	resp.Bfree = resp.Bavail
 
 	return 
