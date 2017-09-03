@@ -5,7 +5,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/google/go-github/github"
-	"github.com/ovh/svfs/svfs"
+	"github.com/netinfinity/svfs/svfs"
 	"github.com/spf13/cobra"
 )
 
