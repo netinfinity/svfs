@@ -241,9 +241,9 @@ func (o *Object) open(mode fuse.OpenFlags, flags *fuse.OpenResponseFlags) (*Obje
 	}
 
 	// Unsupported flags
-	//if mode&fuse.OpenAppend == fuse.OpenAppend {
-	//	return nil, fuse.ENOTSUP
-	//}
+	if mode&fuse.OpenAppend == fuse.OpenAppend {
+		return nil, fuse.ENOTSUP
+	}
 
 	// Supported flags
 	if mode.IsReadOnly() {
