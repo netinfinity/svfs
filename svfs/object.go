@@ -237,7 +237,7 @@ func (o *Object) delete() error {
 func (o *Object) open(mode fuse.OpenFlags, flags *fuse.OpenResponseFlags) (*ObjectHandle, error) {
 	oh := &ObjectHandle{
 		target: o,
-		create: mode&fuse.OpenReadWrite == fuse.OpenReadWrite,
+		create: mode&fuse.OpenCreate == fuse.OpenCreate,
 	}
 
 	// Unsupported flags
